@@ -5,31 +5,6 @@ import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import registerServiceWorker from './registerServiceWorker';
 
-const counter = (state = 0, action) => {
-  switch (action.type) {
-    case 'INCREMENT':
-      return state + 1;
-    case 'DECREMENT':
-      return state - 1;
-    default:
-      return state;
-  }
-}
-
-const Counter = ({
-  value,
-  onIncrement,
-  onDecrement
-}) => (
-  <div>
-    <h1>{value}</h1>
-    <button onClick={onIncrement}>+</button>
-    <button onClick={onDecrement}>-</button>
-  </div>
-);
-
-const store = createStore(counter);
-
 const todo = (state, action) => {
   switch (action.type) {
     case 'ADD_TODO':
@@ -64,6 +39,22 @@ const todos = (state = [], action) => {
     default:
       return state;
   }
+}
+
+const visibilityFilter = (state = 'SHOW_ALL', action) => {
+  switch (action.type) {
+    case 'SET_VISIBILITY_FILTER':
+      return action.filter;
+    default:
+      return state;
+  }
+}
+
+const todoApp = (state = {}, action) => {
+  return {
+    todos: todos(state.todos, action),
+    visibilityFilter: visibilityFilter(state.visibilityFilter, action)
+  };
 }
 
 const testAddTodo = () => {
@@ -131,17 +122,46 @@ testAddTodo();
 testToggleTodo();
 console.log('Tests passed!');
 
+const store = createStore(todoApp);
+
+const logState = () => {
+  console.log('Current state:');
+  console.log(store.getState());
+  console.log('-------------');
+}
+
+const logAndDispatch = action => {
+  console.log('Dispatching ' + action.type);
+  store.dispatch(action);
+}
+
+logState();
+logAndDispatch({
+  type: 'ADD_TODO',
+  id: 0,
+  text: 'Learn Redux'
+});
+logState();
+logAndDispatch({
+  type: 'ADD_TODO',
+  id: 1,
+  text: 'Go shopping'
+});
+logState();
+logAndDispatch({
+  type: 'TOGGLE_TODO',
+  id: 0
+});
+logState();
+logAndDispatch({
+  type: 'SET_VISIBILITY_FILTER',
+  filter: 'SHOW_COMPLETED'
+});
+logState();
+
 const render = () => {
   ReactDOM.render(
-    <Counter
-      value={store.getState()}
-      onIncrement={() => store.dispatch({
-        type: 'INCREMENT'
-      })}
-      onDecrement={() => store.dispatch({
-        type: 'DECREMENT'
-      })}
-    />,
+    <div>Hello, Redux!</div>,
     document.getElementById('root')
   );
 };
