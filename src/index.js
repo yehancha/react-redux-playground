@@ -2,7 +2,7 @@ import React from 'react';
 import deepFreeze from 'deep-freeze';
 import expect from 'expect';
 import ReactDOM from 'react-dom';
-import { combineReducers, createStore } from 'redux';
+import { createStore } from 'redux';
 import registerServiceWorker from './registerServiceWorker';
 
 const todo = (state, action) => {
@@ -25,7 +25,7 @@ const todo = (state, action) => {
     default:
       return state;
   }
-}
+};
 
 const todos = (state = [], action) => {
   switch (action.type) {
@@ -39,7 +39,7 @@ const todos = (state = [], action) => {
     default:
       return state;
   }
-}
+};
 
 const visibilityFilter = (state = 'SHOW_ALL', action) => {
   switch (action.type) {
@@ -48,9 +48,21 @@ const visibilityFilter = (state = 'SHOW_ALL', action) => {
     default:
       return state;
   }
-}
+};
 
-const todoApp = combineReducers({
+const combineReducersFromScratch = (reducers) => {
+  return (state = {}, action) => {
+    return Object.keys(reducers).reduce(
+      (nextState, key) => {
+        nextState[key] = reducers[key](state[key], action);
+        return nextState;
+      },
+      {}
+    );
+  };
+};
+
+const todoApp = combineReducersFromScratch({
   todos,
   visibilityFilter
 });
@@ -76,7 +88,7 @@ const testAddTodo = () => {
   expect(
     todos(stateBefore, action)
   ).toEqual(stateAfter);
-}
+};
 
 const testToggleTodo = () => {
   const stateBefore = [
@@ -114,7 +126,7 @@ const testToggleTodo = () => {
   expect(
     todos(stateBefore, action)
   ).toEqual(stateAfter);
-}
+};
 
 testAddTodo();
 testToggleTodo();
@@ -126,12 +138,12 @@ const logState = () => {
   console.log('Current state:');
   console.log(store.getState());
   console.log('-------------');
-}
+};
 
 const logAndDispatch = action => {
   console.log('Dispatching ' + action.type);
   store.dispatch(action);
-}
+};
 
 logState();
 logAndDispatch({
