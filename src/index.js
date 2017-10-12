@@ -2,7 +2,7 @@ import React from 'react';
 import deepFreeze from 'deep-freeze';
 import expect from 'expect';
 import ReactDOM from 'react-dom';
-import { createStore } from 'redux';
+import { combineReducers, createStore } from 'redux';
 import registerServiceWorker from './registerServiceWorker';
 
 const todo = (state, action) => {
@@ -50,12 +50,10 @@ const visibilityFilter = (state = 'SHOW_ALL', action) => {
   }
 }
 
-const todoApp = (state = {}, action) => {
-  return {
-    todos: todos(state.todos, action),
-    visibilityFilter: visibilityFilter(state.visibilityFilter, action)
-  };
-}
+const todoApp = combineReducers({
+  todos,
+  visibilityFilter
+});
 
 const testAddTodo = () => {
   const stateBefore = [];
