@@ -1,28 +1,12 @@
+import throttle from 'lodash/throttle';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect, Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { addTodo, toggleTodo, setVisibilityFilter } from './actions';
 import registerServiceWorker from './registerServiceWorker';
+import { loadState, saveState } from './localStorage';
 import todoApp from './reducers';
-
-// === Action Creators ===
-
-let nextTodoId = 0;
-const addTodo = (text) => ({
-  type: 'ADD_TODO',
-  id: nextTodoId++,
-  text
-});
-
-const setVisibilityFilter = (filter) => ({
-  type: 'SET_VISIBILITY_FILTER',
-  filter
-});
-
-const toggleTodo = (id) => ({
-  type: 'TOGGLE_TODO',
-  id
-});
 
 const Link = ({
   active,
@@ -169,8 +153,13 @@ const TodoApp = () => (
   </div>
 );
 
-const persistedState = {};
+const persistedState = loadState();
 const store = createStore(todoApp, persistedState);
+store.subscribe(throttle(() => {
+  saveState({
+    todos: store.getState().todos
+  });
+}, 1000));
 
 ReactDOM.render(
   <Provider store={store} >
