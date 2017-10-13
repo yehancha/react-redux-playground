@@ -1,17 +1,18 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Link = ({
   active,
-  onClick,
+  to,
   children
 }) => {
   if (active) {
     return <span>{children}</span>
   } else {
     return (
-      <a href={'#/'} onClick={onClick}>
+      <RouterLink to={to}>
         {children}
-      </a>
+      </RouterLink>
     );
   }
 }
