@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import { connect, Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import registerServiceWorker from './registerServiceWorker';
 
@@ -129,33 +129,22 @@ const TodoList = ({
   </ul>
 );
 
-class VisibleTodoList extends Component {
-  componentDidMount() {
-    const { store } = this.context;
-    this.unsubscribe = store.subscribe(() => this.forceUpdate());
+const mapStateToProps = (state) => {
+  return {
+    todos: getVisibleTodos(state.todos, state.visibilityFilter)
   }
+};
 
-  componentWillUnmount() {
-    this.unsubscribe();
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onTodoClick: id => dispatch({
+      type: 'TOGGLE_TODO',
+      id
+    })
   }
+};
 
-  render() {
-    const { store } = this.context;
-    const state = store.getState();
-
-    return (
-      <TodoList
-        todos={getVisibleTodos(state.todos, state.visibilityFilter)}
-        onTodoClick={id => store.dispatch({
-          type: 'TOGGLE_TODO',
-          id
-        })}/>
-    )
-  }
-}
-VisibleTodoList.contextTypes = {
-  store: PropTypes.object.isRequired
-}
+const VisibleTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoList);
 
 const AddTodo = (props, { store }) => {
   let input;
