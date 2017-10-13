@@ -71,36 +71,20 @@ const Link = ({
   }
 }
 
-class FilterLink extends Component {
-  componentDidMount() {
-    const { store } = this.context;
-    this.unsubscribe = store.subscribe(() => this.forceUpdate());
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe();
-  }
-
-  render() {
-    const props = this.props;
-    const { store } = this.context;
-    const state = store.getState();
-
-    return (
-      <Link
-          active={props.filter === state.visibilityFilter}
-          onClick={() => store.dispatch({
-            type: 'SET_VISIBILITY_FILTER',
-            filter: props.filter
-          })}>
-        {props.children}
-      </Link>
-    )
-  }
-}
-FilterLink.contextTypes = {
-  store: PropTypes.object.isRequired
-}
+const mapStateToLinkProp = (state, ownProps) => {
+  return {
+    active: ownProps.filter === state.visibilityFilter
+  };
+};
+const mapDispatchToLinkProp = (dispatch, ownProp) => {
+  return {
+    onClick: () => dispatch({
+      type: 'SET_VISIBILITY_FILTER',
+      filter: ownProp.filter
+    })
+  };
+};
+const FilterLink = connect(mapStateToLinkProp, mapDispatchToLinkProp)(Link);
 
 const Todo = ({
   onClick,
@@ -128,12 +112,12 @@ const TodoList = ({
     ))}
   </ul>
 );
-const mapStateToProps = (state) => {
+const mapStateToTodoListProps = (state) => {
   return {
     todos: getVisibleTodos(state.todos, state.visibilityFilter)
   }
 };
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToTodoListProps = (dispatch) => {
   return {
     onTodoClick: id => dispatch({
       type: 'TOGGLE_TODO',
@@ -141,7 +125,7 @@ const mapDispatchToProps = (dispatch) => {
     })
   }
 };
-const VisibleTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoList);
+const VisibleTodoList = connect(mapStateToTodoListProps, mapDispatchToTodoListProps)(TodoList);
 
 let AddTodo = ({ dispatch }) => {
   let input;
@@ -163,6 +147,7 @@ let AddTodo = ({ dispatch }) => {
     </div>
   );
 };
+// // === Implementation #1 ===
 // AddTodo = connect(
 //   state => {
 //     return {} // AddTodo needs nothing from store state
@@ -173,6 +158,7 @@ let AddTodo = ({ dispatch }) => {
 //     }
 //   }
 // )(AddTodo); // Presentaional component is the same as the container component
+// // === Implementation #2 ===
 // AddTodo = connect(
 //   null, // no need to even subscribe to the store
 //   dispatch => {
@@ -181,10 +167,12 @@ let AddTodo = ({ dispatch }) => {
 //     }
 //   }
 // )(AddTodo);
+// // === Implementation #3 ===
 // AddTodo = connect(
 //   null, // no need to even subscribe to the store
 //   null // just inject the dispatch as a prop
 // )(AddTodo);
+// // === Implementation #4 ===
 AddTodo = connect()(AddTodo); // does all above
 
 const Footer = () => (
