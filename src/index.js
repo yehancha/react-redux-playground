@@ -169,8 +169,11 @@ const TodoApp = () => (
   </div>
 );
 
+const persistedState = {};
+const store = createStore(todoApp, persistedState);
+
 ReactDOM.render(
-  <Provider store={createStore(todoApp)} >
+  <Provider store={store} >
     <TodoApp />
   </Provider>,
   document.getElementById('root')
