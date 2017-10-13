@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect, Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
 import registerServiceWorker from './registerServiceWorker';
+
+// === Reducers ===
 
 const todo = (state, action) => {
   switch (action.type) {
@@ -55,6 +56,31 @@ const todoApp = combineReducers({
   visibilityFilter
 });
 
+// === Action Creators ===
+
+let nextTodoId = 0;
+const addTodo = (text) => {
+  return {
+    type: 'ADD_TODO',
+    id: nextTodoId++,
+    text
+  };
+};
+
+const setVisibilityFilter = (filter) => {
+  return {
+    type: 'SET_VISIBILITY_FILTER',
+    filter
+  };
+};
+
+const toggleTodo = (id) => {
+  return {
+    type: 'TOGGLE_TODO',
+    id
+  };
+};
+
 const Link = ({
   active,
   onClick,
@@ -76,12 +102,9 @@ const mapStateToLinkProp = (state, ownProps) => {
     active: ownProps.filter === state.visibilityFilter
   };
 };
-const mapDispatchToLinkProp = (dispatch, ownProp) => {
+const mapDispatchToLinkProp = (dispatch, ownProps) => {
   return {
-    onClick: () => dispatch({
-      type: 'SET_VISIBILITY_FILTER',
-      filter: ownProp.filter
-    })
+    onClick: () => dispatch(setVisibilityFilter(ownProps.filter))
   };
 };
 const FilterLink = connect(mapStateToLinkProp, mapDispatchToLinkProp)(Link);
@@ -119,10 +142,7 @@ const mapStateToTodoListProps = (state) => {
 };
 const mapDispatchToTodoListProps = (dispatch) => {
   return {
-    onTodoClick: id => dispatch({
-      type: 'TOGGLE_TODO',
-      id
-    })
+    onTodoClick: id => dispatch(toggleTodo(id))
   }
 };
 const VisibleTodoList = connect(mapStateToTodoListProps, mapDispatchToTodoListProps)(TodoList);
@@ -135,11 +155,7 @@ let AddTodo = ({ dispatch }) => {
         input = node;
       }}/>
       <button onClick={() => {
-        dispatch({
-          type: 'ADD_TODO',
-          id: nextTodoId++,
-          text: input.value
-        });
+        dispatch(addTodo(input.value));
         input.value = '';
       }}>
         Add Todo
@@ -205,8 +221,6 @@ const getVisibleTodos = (todos, filter) => {
 
   }
 };
-
-let nextTodoId = 0;
 
 const TodoApp = () => (
   <div>
