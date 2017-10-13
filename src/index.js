@@ -128,13 +128,11 @@ const TodoList = ({
     ))}
   </ul>
 );
-
 const mapStateToProps = (state) => {
   return {
     todos: getVisibleTodos(state.todos, state.visibilityFilter)
   }
 };
-
 const mapDispatchToProps = (dispatch) => {
   return {
     onTodoClick: id => dispatch({
@@ -143,10 +141,9 @@ const mapDispatchToProps = (dispatch) => {
     })
   }
 };
-
 const VisibleTodoList = connect(mapStateToProps, mapDispatchToProps)(TodoList);
 
-const AddTodo = (props, { store }) => {
+let AddTodo = ({ dispatch }) => {
   let input;
   return (
     <div>
@@ -154,7 +151,7 @@ const AddTodo = (props, { store }) => {
         input = node;
       }}/>
       <button onClick={() => {
-        store.dispatch({
+        dispatch({
           type: 'ADD_TODO',
           id: nextTodoId++,
           text: input.value
@@ -165,10 +162,30 @@ const AddTodo = (props, { store }) => {
       </button>
     </div>
   );
-}
-AddTodo.contextTypes = {
-  store: PropTypes.object.isRequired
-}
+};
+// AddTodo = connect(
+//   state => {
+//     return {} // AddTodo needs nothing from store state
+//   },
+//   dispatch => {
+//     return {
+//       dispatch // AddTodo needs dispatch as it is, rather than callbacks
+//     }
+//   }
+// )(AddTodo); // Presentaional component is the same as the container component
+// AddTodo = connect(
+//   null, // no need to even subscribe to the store
+//   dispatch => {
+//     return {
+//       dispatch
+//     }
+//   }
+// )(AddTodo);
+// AddTodo = connect(
+//   null, // no need to even subscribe to the store
+//   null // just inject the dispatch as a prop
+// )(AddTodo);
+AddTodo = connect()(AddTodo); // does all above
 
 const Footer = () => (
   <p>
