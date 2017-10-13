@@ -1,23 +1,13 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
+import { withRouter } from 'react-router-dom';
 import Link from './Link';
 
-class FilterLink extends Component {
-  render() {
-    const { filter, children } = this.props;
-    const location = filter === 'all' ? '' : filter;
-    const active = ('/' + location) === this.context.router.route.location.pathname;
+const FilterLink = ({ filter, children, match }) => (
+  <Link
+      active={filter === (match.params.filter || 'all')}
+      to={filter === 'all' ? '' : filter}>
+    {children}
+  </Link>
+);
 
-    return (
-      <Link to={location} active={active}>
-        {children}
-      </Link>
-    );
-  }
-}
-
-FilterLink.contextTypes = {
-  router: PropTypes.object.isRequired
-}
-
-export default FilterLink;
+export default withRouter(FilterLink);
