@@ -5,14 +5,16 @@
   "dependencies": {
     "deep-freeze": "0.0.1",
     "expect": "^21.2.1",
-    "loadash": "^1.0.0",
     "node-uuid": "^1.4.8",
+    "normalizr": "^3.2.4",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
     "react-scripts": "1.0.14"
