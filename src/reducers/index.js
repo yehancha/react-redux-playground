@@ -21,3 +21,6 @@ export const getVisibleTodos = (state, filter) => { // state matches the state p
 
 export const getIsFetching = (state, filter) =>
   fromList.getIsFetching(state.listByFilter[filter]);
+
+export const getErrorMessage = (state, filter) =>
+  fromList.getErrorMessage(state.listByFilter[filter]);
