@@ -15,12 +15,12 @@ const receiveTodos = (filter, response) => ({
 
 export const fetchTodos = (filter) => (dispatch, getState) => { // asynchronouse action creator
   if (getIsFetching(getState(), filter)) {
-    return;
+    return Promise.resolve();
   }
 
   dispatch(requestTodos(filter));
 
-  api.fetchTodos(filter).then(response =>
+  return api.fetchTodos(filter).then(response =>
     dispatch(receiveTodos(filter, response))
   );
 };
