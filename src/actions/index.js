@@ -1,5 +1,6 @@
 import { v4 } from 'node-uuid';
 import * as api from '../api';
+import { getIsFetching } from '../reducers';
 
 const requestTodos = (filter) => ({
   type: 'REQUEST_TODOS',
@@ -12,7 +13,11 @@ const receiveTodos = (filter, response) => ({
   response
 });
 
-export const fetchTodos = (filter) => (dispatch) => { // asynchronouse action creator
+export const fetchTodos = (filter) => (dispatch, getState) => { // asynchronouse action creator
+  if (getIsFetching(getState(), filter)) {
+    return;
+  }
+
   dispatch(requestTodos(filter));
 
   api.fetchTodos(filter).then(response =>
